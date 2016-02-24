@@ -8,13 +8,13 @@ from pushover import init, Client
 
 #Twitter API Globals
 CONSUMER_KEY = "{Insert CONSUMER KEY}"
-CONSUMER_SECRET = "{Insert CONSUMER_SECRET}"
+CONSUMER_SECRET = "{Insert CONSUMER SECRET}"
 ACCESS_KEY = "{Insert ACCESS KEY}"
 ACCESS_SECRET = "{Insert ACCESS SECRET}"
 
 #Pushover API Globals
-API_TOKEN = "{Insert API TOKEN}"
-USER_KEY = "{Insert USER KEY}"
+API_TOKEN = "{Insert API Token}"
+USER_KEY = "{Insert User Key}"
 
 ## Scrape data from Coastalwatch
 def get_coastalwatch_report():
@@ -35,6 +35,13 @@ def get_coastalwatch_report():
 		##Output Current Wind Direction
 		for i in soup.select(".today .wind .dir"):
 			report += " " + str(i.get_text(strip=True)) + "\n"
+
+		##Output Current Tide
+		for i in soup.select(".today .tide strong"):
+			report += "Current Tide: " + str(i.get_text(strip=True)) + "\n"
+			##Todays Tide
+			for i in soup.select(".today .tide span"):
+				report += str(i.get_text(strip=True)) + "\n"
 
 		##Output Todays Rating
 		for i in soup.select(".surfReport li h4 strong"):
@@ -60,7 +67,7 @@ def tweet_to_twitter(astring):
 def send_to_pushover(astring):
 	client = Client(USER_KEY, api_token = API_TOKEN)
 	astring = "***Coastalwatch Report***\n" + astring
-	client.send_message(astring, sound="bike")
+	client.send_message(astring)
 
 if __name__ == "__main__":
 	coastalwatch = get_coastalwatch_report()
